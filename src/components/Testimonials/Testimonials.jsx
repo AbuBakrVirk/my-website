@@ -1,7 +1,6 @@
-import { init } from 'aos';
-import { data } from 'autoprefixer';
 import React from 'react'
-import Slider from 'react-slick';
+import ReactSlick from 'react-slick';
+const Slider = ReactSlick.default || ReactSlick;
 
 const TestimonialsData=[
     {
@@ -89,12 +88,11 @@ var settings = {
 
         {/* Testimonial Cards */}
         <div data-aos="zoom-in">
-         {/* <Slider{...settings}>  */}
+         <Slider {...settings}>
         {
             TestimonialsData.map((data)=>(
-                <div className="my-6">
-                    <div 
-                    key={data.id}
+                <div className="my-6" key={data.id}>
+                    <div
                     className="flex flex-col gap-4
                     shadow-lg py-8 px-6 mx-4 rounded-xl dark:bg-gray-800
                      bg-primary/10 relative"
@@ -113,10 +111,10 @@ var settings = {
                     </div>
                     <p className="text-black/20 text-9xl
                      font-serif absolute top-0 right-0">,,</p>
-                </div>    
+                </div>
             </div>
             ))}
-        {/* </Slider>  */}
+        </Slider>
         </div>
         </div>
     </div>

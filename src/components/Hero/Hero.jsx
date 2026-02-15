@@ -2,7 +2,8 @@ import React from 'react';
 import Image2 from "./image2.png";
 import Image3 from "./image3.png";
 import Image1 from "./image1.png";
-import Slider from "react-slick";
+import ReactSlick from "react-slick";
+const Slider = ReactSlick.default || ReactSlick;
 
 
 const ImageList=[
@@ -51,7 +52,7 @@ const Hero = ({handleOrderPopup}) => {
          -z-9"></div>
         {/* hero section */}
         <div className="container pb-8 sm:pb-0">
-                 {/* <Slider {...settings} >  */}
+                 <Slider {...settings}>
                 {ImageList.map((data)=>(
              <div key={data.id}>
              <div className="grid grid-cols-1 sm:grid-cols-2">
@@ -62,10 +63,10 @@ const Hero = ({handleOrderPopup}) => {
                 <h1
                 data-aos="zoom-out"
                 data-aos-duration="500"
-                data-aos-once="true"  
+                data-aos-once="true"
                 className="text-5xl sm:text-6xl
                  lg:text-7xl font-bold">{data.title}</h1>
-                <p  
+                <p
                 data-aos="fade-up"
                 data-aos-duration="500"
                 data-aos-delay="100"
@@ -88,7 +89,7 @@ const Hero = ({handleOrderPopup}) => {
                     {/* image section */}
                     <div className="order-1 sm:order-2">
                         <div data-aos="zoom-in"
-                        data-aos-once="true" 
+                        data-aos-once="true"
                         className="relative z-10">
                             <img src={data.img} alt=""
                             className="w-[300px] h-[300px] sm:h-[450px]
@@ -99,7 +100,7 @@ const Hero = ({handleOrderPopup}) => {
             </div>
         </div>
           ))}
-           {/* </Slider>  */}
+           </Slider> 
     </div>
     </div>
   );

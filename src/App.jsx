@@ -6,7 +6,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import TopProducts from "./components/Top Products/TopProducts";
 import Banner from "./components/Banner/Banner";
-import Subscribe from "./components/subscribe/subscribe";
+import Subscribe from "./components/Subscribe/Subscribe";
 import Testimonials from "./components/Testimonials/Testimonials";
 import Footer from "./components/Footer/Footer";
 import Popup from "./components/Popup/Popup";
