@@ -1,35 +1,86 @@
-import React from 'react'
-import Banner from "./orange.jpg";
+import React, { useState } from 'react';
+import { MdEmail, MdArrowForward, MdCheckCircle } from 'react-icons/md';
+import { FaBell } from 'react-icons/fa';
 
-
-const BannerImg={
-    backgroundImage: `url(${Banner})`,
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    height: "100%",
-    width: "100%",
-}
 export const Subscribe = () => {
+  const [email, setEmail]       = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError]       = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    setError("");
+    setSubmitted(true);
+  };
+
   return (
-    <div
-    data-aos="zoom-in"
-    className="mb-20 bg-gray-100 dark:bg-gray-800
-     text-white" style={BannerImg}
+    <section
+      data-aos="fade-up"
+      className="relative overflow-hidden py-16 sm:py-20 my-10 mx-4 sm:mx-8 lg:mx-16 rounded-3xl
+        bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900
+        dark:from-gray-950 dark:via-gray-900 dark:to-gray-950"
     >
-        <div className="container backdrop-blur-sm
-         py-10">
-        <div className="space-y-6 max-w-xl mx-auto">
-            <h1
-            className="text-2xl !text-center sm:text-left
-             sm:text-4xl font-semibold"
-            >Get Notified About New Products</h1>
-            <input data-aos="fade-up" type="text" placeholder="Enter your email"
-            className="w-full p-3"/>
-            </div>
+      {/* Decorative blobs */}
+      <div className="absolute top-0 left-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-64 h-64 bg-secondary/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 pointer-events-none" />
+
+      <div className="relative z-10 max-w-2xl mx-auto px-6 text-center">
+
+        {/* Icon */}
+        <div className="inline-flex items-center justify-center w-14 h-14 bg-primary/20 rounded-2xl mb-6">
+          <FaBell className="text-primary text-2xl" />
         </div>
-    </div>
-  )
-}
+
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+          Stay in the Loop
+        </h2>
+        <p className="text-gray-400 text-sm sm:text-base mb-8 max-w-md mx-auto">
+          Get notified about new arrivals, exclusive deals, and performance tips — straight to your inbox.
+        </p>
+
+        {submitted ? (
+          <div className="flex items-center justify-center gap-3 bg-green-500/10 border border-green-500/30
+            rounded-2xl px-6 py-4 text-green-400 font-semibold animate-fade-in">
+            <MdCheckCircle className="text-2xl flex-shrink-0" />
+            <span>You're subscribed! Welcome to the Motorly family 🚗</span>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <div className="flex-1 relative">
+              <MdEmail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setError(""); }}
+                placeholder="your@email.com"
+                className={`w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/10 border text-white
+                  placeholder-gray-500 focus:outline-none focus:border-primary transition-colors duration-200
+                  ${error ? "border-red-500" : "border-white/10 hover:border-white/20"}`}
+              />
+            </div>
+            <button
+              type="submit"
+              className="flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-secondary
+                text-white font-bold px-6 py-3.5 rounded-xl hover:shadow-glow hover:scale-105
+                duration-200 whitespace-nowrap"
+            >
+              Subscribe <MdArrowForward />
+            </button>
+          </form>
+        )}
+
+        {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
+
+        <p className="text-gray-600 text-xs mt-4">
+          No spam, ever. Unsubscribe anytime.
+        </p>
+      </div>
+    </section>
+  );
+};
 
 export default Subscribe;

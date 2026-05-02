@@ -1,153 +1,328 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logo from '../../assets/logo.png';
-import { IoMdSearch } from "react-icons/io";
-import { FaCaretDown, FaCartShopping } from "react-icons/fa6";
+import { IoMdSearch, IoMdClose } from "react-icons/io";
+import { FaCaretDown, FaCartShopping, FaBars } from "react-icons/fa6";
+import { FaSignOutAlt, FaUser, FaBoxOpen, FaHome, FaStar, FaTachometerAlt } from "react-icons/fa";
+import { MdElectricBolt } from "react-icons/md";
+import { GiCarWheel } from "react-icons/gi";
 import DarkMode from './DarkMode';
+import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 
-
-const Menu=[
-    {
-        id: 1,
-        name1: "Home",
-        link: "/#",
-    },
-     {
-        id: 2,
-        name1: "Top Rated",
-        link: "/#services",
-    },
-     {
-        id: 3,
-        name1: "Tyres",
-        link: "/#",
-    },
-     {
-        id: 3,
-        name1: "Interior",
-        link: "/#",
-    },
-     {
-        id: 3,
-        name1: "Electronics",
-        link: "/#",
-    },
+const Menu = [
+  { id: 1, name1: "Home",        section: null,          icon: <FaHome /> },
+  { id: 2, name1: "Top Rated",   section: "top-rated",   icon: <FaStar /> },
+  { id: 3, name1: "Tyres",       section: "tyres",       icon: <GiCarWheel /> },
+  { id: 4, name1: "Interior",    section: "interior",    icon: <FaUser /> },
+  { id: 5, name1: "Electronics", section: "electronics", icon: <MdElectricBolt /> },
 ];
 
-const DropdownLinks=[
-    {
-        id: 1,
-        name1: "Trending Products",
-        link: "/#",
-    },
-     {
-        id: 2,
-        name1: "Best Selling",
-        link: "/#",
-    },
-     {
-        id: 3,
-        name1: "Top Rated",
-        link: "/#",
-    },
+const DropdownLinks = [
+  { id: 1, name1: "Trending Products", section: "trending",     desc: "What's hot right now" },
+  { id: 2, name1: "Best Selling",      section: "best-selling", desc: "Customer favourites" },
+  { id: 3, name1: "Top Rated",         section: "top-rated",    desc: "Highest rated items" },
+  { id: 4, name1: "New Arrivals",      section: "new",          desc: "Just landed" },
 ];
 
+// Scroll to section — works from any page
+const scrollToSection = (section, navigate, location) => {
+  if (!section) { navigate("/shop"); return; }
+  if (location.pathname === "/shop") {
+    const el = document.getElementById(section);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else {
+    navigate("/shop");
+    setTimeout(() => {
+      const el = document.getElementById(section);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 400);
+  }
+};
 
-export const Navbar = ({handleOrderPopup}) => {
+export const Navbar = ({ handleOrderPopup, onCartOpen }) => {
+  const { isLoggedIn, user, logout } = useAuth();
+  const { totalQty } = useCart();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [userMenuOpen,   setUserMenuOpen]   = useState(false);
+  const [trendingOpen,   setTrendingOpen]   = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const userMenuRef  = useRef(null);
+  const trendingRef  = useRef(null);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) setUserMenuOpen(false);
+      if (trendingRef.current && !trendingRef.current.contains(e.target)) setTrendingOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => { setMobileMenuOpen(false); }, [location]);
+
+  const handleLogout = () => {
+    logout();
+    setUserMenuOpen(false);
+    setMobileMenuOpen(false);
+    navigate("/");
+  };
+
   return (
-    <div className="shadow-md bg-white dark:bg-gray-900 
-    dark:text-white duration-200 relative z-40">
-        {/* upper navbar */}
-        <div className="bg-primary/40 py-2">
-            <div className="container flex justify-between items-center">
-                <div>
-                <a href="#"
-                className="font-bold text-2xl sm:text-3xl flex gap-2">
-                    <img  data-aos="fade-up" src={logo} alt="logo" 
-                    className="w-10 h-10 uppercase"/>
-                    Motorly
-                </a>
-                </div>
-               {/* search bar  */}
-               <div className="flex justify-between 
-               items-center gap-4">
-                <div className="relative group hidden sm:inline-block">
-                    <input type="text" placeholder="search"  data-aos="fade-up" 
-                    className="w-[200px] sm:w-[200px]
-                     group-hover:w-[300px] transition-all
-                     duration-300 rounded-full border border-gray-300 
-                     px-2 py-1 focus:outline-none focus:border-1
-                     focus:border-primary dark:border-gray-500
-                      dark:bg-gray-800" />
-                     <IoMdSearch
-                     className="text-gray-500 
-                     group-hover:text-primary absolute top-1/2
-                      -translate-y-1/2 right-3" />
-                </div>
-               </div>
-               {/* order button */}
-               <button  data-aos="fade-up"  onClick={() => handleOrderPopup()}
-               className="bg-gradient-to-r from-primary/50 to-secondary/90 
-               transition-all duration-200 text-white py-1 px-4 rounded-full 
-               flex items-center gap-3 group">
+    <div className="bg-white dark:bg-gray-900 dark:text-white duration-200 relative z-40" style={{ overflow: "visible" }}>
 
-                <span 
-                className="group-hover:block
-                hidden transition-all duration-200"
-                >Order</span>
-                <FaCartShopping
-                className="text-xl
-                 text-black drop-shadow-sm cursor-pointer"/>
-               </button>
-               {/* darkmode switch */}
-               <div>
-                <DarkMode/>
-               </div>
+      {/* ══ Upper navbar ══ */}
+      <div className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm duration-200">
+        <div className="container px-4 flex items-center justify-between gap-3 py-2.5">
+
+          {/* Logo */}
+          <Link to="/shop" className="font-bold text-xl sm:text-2xl flex items-center gap-2 flex-shrink-0">
+            <img src={logo} alt="logo" className="w-8 h-8 sm:w-10 sm:h-10" />
+            <span className="hidden sm:block text-gray-900 dark:text-white">Motorly</span>
+          </Link>
+
+          {/* Search — desktop only */}
+          <div className="flex-1 flex justify-center max-w-xs hidden md:flex">
+            <div className="relative w-full">
+              <input
+                type="text"
+                placeholder="Search products..."
+                className="w-full rounded-full border border-gray-200 dark:border-gray-700
+                  bg-gray-50 dark:bg-gray-800 px-4 py-1.5 text-sm focus:outline-none
+                  focus:border-primary dark:text-white placeholder-gray-400"
+              />
+              <IoMdSearch className="absolute top-1/2 -translate-y-1/2 right-3 text-gray-400 text-lg" />
             </div>
+          </div>
+
+          {/* Right actions */}
+          <div className="flex items-center gap-2 sm:gap-3">
+
+            {/* Cart button */}
+            <button
+              onClick={onCartOpen}
+              className="relative bg-gradient-to-r from-primary to-secondary text-white
+                py-1.5 px-3 sm:px-4 rounded-full flex items-center gap-2 whitespace-nowrap
+                hover:scale-105 duration-200 shadow-sm"
+            >
+              <span className="hidden sm:block text-sm font-semibold">Cart</span>
+              <FaCartShopping className="text-base sm:text-lg" />
+              {totalQty > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px]
+                  font-extrabold w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+                  {totalQty > 99 ? "99+" : totalQty}
+                </span>
+              )}
+            </button>
+
+            {/* Auth — logged in */}
+            {isLoggedIn ? (
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800
+                    hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-1.5 rounded-full duration-200"
+                >
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-secondary
+                    flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                    {user?.name?.[0]?.toUpperCase()}
+                  </div>
+                  <span className="hidden sm:block text-sm font-medium max-w-[90px] truncate dark:text-white">
+                    {user?.name?.split(" ")[0]}
+                  </span>
+                  <FaCaretDown className={`text-xs text-gray-500 transition-transform duration-200 ${userMenuOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {userMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-gray-800
+                    rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700
+                    overflow-hidden z-[9999] animate-fade-in">
+                    <div className="px-4 py-3 bg-primary/5 dark:bg-primary/10 border-b border-gray-100 dark:border-gray-700">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary
+                          flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                          {user?.name?.[0]?.toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold dark:text-white truncate">{user?.name}</p>
+                          <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+                        </div>
+                      </div>
+                    </div>
+                    {[
+                      { icon: <FaBoxOpen className="text-primary" />, label: "My Orders",  action: () => { setUserMenuOpen(false); navigate("/orders"); } },
+                      { icon: <FaUser className="text-primary" />,    label: "My Account", action: () => { setUserMenuOpen(false); navigate("/shop"); } },
+                    ].map((item) => (
+                      <button key={item.label} onClick={item.action}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm
+                          hover:bg-gray-50 dark:hover:bg-gray-700 duration-200 dark:text-gray-200">
+                        {item.icon} {item.label}
+                      </button>
+                    ))}
+                    <div className="border-t border-gray-100 dark:border-gray-700" />
+                    <button onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm
+                        text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 duration-200">
+                      <FaSignOutAlt /> Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Auth — guest */
+              <div className="flex items-center gap-2">
+                <Link to="/login"
+                  className="hidden sm:inline-flex items-center text-sm font-semibold px-4 py-1.5
+                    rounded-full border-2 border-primary text-primary hover:bg-primary/5 duration-200">
+                  Sign In
+                </Link>
+                <Link to="/register"
+                  className="inline-flex items-center text-sm font-semibold px-4 py-1.5
+                    rounded-full bg-gradient-to-r from-primary to-secondary text-white
+                    hover:scale-105 duration-200 shadow-md">
+                  Sign Up
+                </Link>
+              </div>
+            )}
+
+            <DarkMode />
+
+            {/* Mobile hamburger */}
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 duration-200"
+              aria-label="Toggle menu">
+              {mobileMenuOpen
+                ? <IoMdClose className="text-xl text-gray-700 dark:text-white" />
+                : <FaBars className="text-xl text-gray-700 dark:text-white" />}
+            </button>
+          </div>
         </div>
-        {/* lower navbar */}
-        <div data-aos="zoom-in" 
-        className="flex justify-center bg-black text-white">
-           <ul className="sm:flex hidden items-center">
-            {
-                Menu.map((data)=>(
-                    <li key={data.id}>
-                        <a  data-aos="fade-up"  href={data.link}
-                        className="inline-block px-4 hover:text-primary/50 
-                        duration-200"
-                        >{data.name1}</a>
-                    </li>
-                ))
-            }
-            {/* simple dropdown and links */}
-            <li className="group relative cursor-pointer">
-            <a href="#"
-            className="flex items-center  gap-[2px] py-2">
-                Trending 
-            <span>
-                <FaCaretDown className="transition-all duration-200
-                 group-hover:rotate-180"/>
-            </span>
-            </a>
-            <div className="absolute z-[9999] hidden group-hover:block w-[150px]
-             rounded-md bg-black p-2 text-white shadow-md">
-                <ul>
-                    {
-                    DropdownLinks.map((data)=>(
-                        <li key={data.id}>
-                            <a href={data.link}
-                            className="inline-block w-full
-                             rounded-md p-2 hover:bg-primary/50"> 
-                                {data.name1}
-                            </a>
-                        </li>
-                    ))
-                    }
-                    </ul>
+      </div>
+
+      {/* ══ Mobile menu ══ */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-lg animate-slide-up">
+          {/* Mobile search */}
+          <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+            <div className="relative">
+              <input type="text" placeholder="Search products..."
+                className="w-full rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200
+                  dark:border-gray-700 px-4 py-2 text-sm focus:outline-none focus:border-primary
+                  dark:text-white placeholder-gray-400" />
+              <IoMdSearch className="absolute top-1/2 -translate-y-1/2 right-3 text-gray-400 text-lg" />
             </div>
+          </div>
+          {/* Nav links */}
+          <div className="px-4 py-2">
+            {Menu.map((item) => (
+              <button key={item.id}
+                onClick={() => { setMobileMenuOpen(false); scrollToSection(item.section, navigate, location); }}
+                className="w-full flex items-center gap-3 py-3 text-sm text-gray-700 dark:text-gray-300
+                  hover:text-primary border-b border-gray-100 dark:border-gray-800 last:border-0 duration-200 text-left">
+                <span className="text-primary/70">{item.icon}</span>
+                {item.name1}
+              </button>
+            ))}
+            <div className="py-2">
+              <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 mt-1">Trending</p>
+              {DropdownLinks.map((item) => (
+                <button key={item.id}
+                  onClick={() => { setMobileMenuOpen(false); scrollToSection(item.section, navigate, location); }}
+                  className="w-full flex items-center gap-3 py-2.5 text-sm text-gray-600
+                    dark:text-gray-400 hover:text-primary duration-200 text-left">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary/60 flex-shrink-0" />
+                  {item.name1}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* Mobile auth buttons */}
+          {!isLoggedIn ? (
+            <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-800 flex gap-3">
+              <Link to="/login" onClick={() => setMobileMenuOpen(false)}
+                className="flex-1 text-center py-2.5 rounded-xl border-2 border-primary
+                  text-primary text-sm font-semibold hover:bg-primary/5 duration-200">
+                Sign In
+              </Link>
+              <Link to="/register" onClick={() => setMobileMenuOpen(false)}
+                className="flex-1 text-center py-2.5 rounded-xl bg-gradient-to-r
+                  from-primary to-secondary text-white text-sm font-semibold hover:scale-[1.02] duration-200">
+                Sign Up
+              </Link>
+            </div>
+          ) : (
+            <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-800 flex gap-3">
+              <button onClick={() => { setMobileMenuOpen(false); navigate("/orders"); }}
+                className="flex-1 text-center py-2.5 rounded-xl border border-gray-200 dark:border-gray-700
+                  text-sm font-medium hover:border-primary hover:text-primary duration-200 dark:text-gray-300">
+                My Orders
+              </button>
+              <button onClick={handleLogout}
+                className="flex-1 text-center py-2.5 rounded-xl bg-red-50 dark:bg-red-900/20
+                  border border-red-200 dark:border-red-800 text-red-500 text-sm font-medium duration-200">
+                Sign Out
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ══ Lower navbar — desktop only ══ */}
+      <div className="hidden md:flex justify-center bg-gray-900 text-white relative" style={{ overflow: "visible" }}>
+        <ul className="flex items-center" style={{ overflow: "visible" }}>
+          {Menu.map((data) => (
+            <li key={data.id}>
+              <button
+                onClick={() => scrollToSection(data.section, navigate, location)}
+                className="flex items-center gap-1.5 px-4 py-2.5 text-sm text-gray-300
+                  hover:text-primary hover:bg-white/5 duration-200"
+              >
+                <span className="text-primary/60 text-xs">{data.icon}</span>
+                {data.name1}
+              </button>
             </li>
-           </ul>
-        </div>
-   </div>
+          ))}
+
+          {/* Trending dropdown */}
+          <li className="relative" ref={trendingRef} style={{ overflow: "visible" }}>
+            <button
+              onClick={() => setTrendingOpen(!trendingOpen)}
+              className={`flex items-center gap-1.5 px-4 py-2.5 text-sm duration-200
+                ${trendingOpen ? "text-primary bg-white/5" : "text-gray-300 hover:text-primary hover:bg-white/5"}`}
+            >
+              <FaTachometerAlt className="text-primary/60 text-xs" />
+              Trending
+              <FaCaretDown className={`text-xs transition-all duration-200 ${trendingOpen ? "rotate-180 text-primary" : ""}`} />
+            </button>
+
+            {trendingOpen && (
+              <div className="absolute left-0 top-[calc(100%+2px)] w-64 rounded-2xl bg-gray-900
+                border border-gray-700 shadow-2xl py-2 animate-fade-in" style={{ zIndex: 99999 }}>
+                {DropdownLinks.map((data) => (
+                  <button key={data.id}
+                    onClick={() => { setTrendingOpen(false); scrollToSection(data.section, navigate, location); }}
+                    className="w-full flex items-start gap-3 px-4 py-3 hover:bg-white/5 duration-200 group text-left">
+                    <span className="w-2 h-2 rounded-full bg-primary/50 group-hover:bg-primary
+                      flex-shrink-0 mt-1.5 transition-colors duration-200" />
+                    <div>
+                      <p className="text-sm text-gray-200 group-hover:text-primary duration-200 font-medium">
+                        {data.name1}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">{data.desc}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </li>
+        </ul>
+      </div>
+    </div>
   );
 };
 
