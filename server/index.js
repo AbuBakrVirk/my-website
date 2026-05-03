@@ -4,6 +4,7 @@ const express = require("express");
 const cors    = require("cors");
 const helmet  = require("helmet");
 const morgan  = require("morgan");
+const path    = require("path");
 
 const { connectDB }           = require("./db/connection");
 const authRoutes              = require("./routes/auth");
@@ -29,7 +30,6 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl, Postman)
       if (!origin) return callback(null, true);
       if (allowedOrigins.some((o) => origin.startsWith(o))) {
         return callback(null, true);
@@ -46,34 +46,35 @@ app.use(
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 
-/* ── Routes ── */
+/* ── API Routes ── */
 app.use("/api/auth",      authRoutes);
-app.use("/api/orders",   orderRoutes);
+app.use("/api/orders",    orderRoutes);
 app.use("/api/subscribe", subscribeRoutes);
-app.use("/api/contact",  contactRoutes);
+app.use("/api/contact",   contactRoutes);
 
 /* ── Health check ── */
 app.get("/api/health", (req, res) =>
   res.json({ success: true, message: "Motorly API is running 🚗", timestamp: new Date().toISOString() })
 );
 
-/* ── Test email endpoint (dev only) ── */
-app.post("/api/test-email", async (req, res) => {
-  if (process.env.NODE_ENV !== "development") {
-    return res.status(403).json({ success: false, message: "Only available in development." });
-  }
-  const { sendWelcomeEmail } = require("./utils/email");
-  const { to = "test@example.com" } = req.body;
-  const result = await sendWelcomeEmail({ to, name: "Test User" });
-  res.json({ success: true, result });
-});
+/* ── Serve React frontend in production ── */
+if (process.env.NODE_ENV === "production") {
+  const distPath = path.join(__dirname, "../dist");
+  app.use(express.static(distPath));
+  // All non-API routes → React app (client-side routing)
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(distPath, "index.html"));
+  });
+}
 
-/* ── 404 handler ── */
-app.use((req, res) =>
-  res.status(404).json({ success: false, message: `Route ${req.method} ${req.path} not found.` })
-);
+/* ── 404 handler (dev only — production uses React catch-all) ── */
+if (process.env.NODE_ENV !== "production") {
+  app.use((req, res) =>
+    res.status(404).json({ success: false, message: `Route ${req.method} ${req.path} not found.` })
+  );
+}
 
-/* ── Global error handler — logs full stack in dev ── */
+/* ── Global error handler ── */
 app.use((err, req, res, next) => {
   console.error("\n🔴 Unhandled error on", req.method, req.path);
   console.error(err.stack || err);
@@ -86,8 +87,8 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, async () => {
-  console.log(`\n🚗  Motorly API running on http://localhost:${PORT}`);
+  console.log(`\n🚗  Motorly API running on port ${PORT}`);
   console.log(`📋  Health: http://localhost:${PORT}/api/health\n`);
-  await connectDB();        // connect MongoDB (or warn if not configured)
-  verifyEmailConnection();  // check Resend API key
+  await connectDB();
+  verifyEmailConnection();
 });
