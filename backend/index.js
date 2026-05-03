@@ -1,5 +1,9 @@
 require("dotenv").config();
 
+// Catch any unhandled crash and log it clearly
+process.on("uncaughtException",  (err) => console.error("💥 Uncaught:", err));
+process.on("unhandledRejection", (err) => console.error("💥 Unhandled:", err));
+
 const express = require("express");
 const cors    = require("cors");
 const helmet  = require("helmet");
