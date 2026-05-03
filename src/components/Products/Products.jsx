@@ -6,6 +6,7 @@ import Img4 from "./img4.png";
 import Img5 from "./img5.png";
 import { FaStar, FaShoppingCart } from "react-icons/fa";
 import { MdCheckCircle } from "react-icons/md";
+import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 
 const ProductsData = [
@@ -127,9 +128,16 @@ export const Products = ({ handleOrderPopup }) => {
 
         {/* View all */}
         <div className="flex justify-center mt-8 sm:mt-10">
-          <button className="bg-gradient-to-r from-primary/80 to-secondary text-white font-semibold py-2.5 px-8 rounded-full hover:scale-105 duration-200 shadow-md text-sm sm:text-base">
+          <Link
+            to="/shop"
+            onClick={() => setTimeout(() => {
+              const el = document.getElementById("products");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }, 100)}
+            className="bg-gradient-to-r from-primary/80 to-secondary text-white font-semibold py-2.5 px-8 rounded-full hover:scale-105 duration-200 shadow-md text-sm sm:text-base"
+          >
             View All Products
-          </button>
+          </Link>
         </div>
       </div>
     </div>

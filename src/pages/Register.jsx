@@ -339,13 +339,13 @@ const Register = () => {
                   />
                   <label htmlFor="agreeTerms" className="text-sm text-gray-600 dark:text-gray-400 cursor-pointer leading-5">
                     I agree to the{" "}
-                    <span className="text-primary hover:text-secondary duration-200 font-medium cursor-pointer">
+                    <Link to="/terms" className="text-primary hover:text-secondary duration-200 font-medium">
                       Terms of Service
-                    </span>{" "}
+                    </Link>{" "}
                     and{" "}
-                    <span className="text-primary hover:text-secondary duration-200 font-medium cursor-pointer">
+                    <Link to="/privacy" className="text-primary hover:text-secondary duration-200 font-medium">
                       Privacy Policy
-                    </span>
+                    </Link>
                   </label>
                 </div>
                 {errors.agreeTerms && (

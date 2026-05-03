@@ -71,3 +71,8 @@ export const ordersAPI = {
 export const subscribeAPI = {
   subscribe: (email) => request("/subscribe", { method: "POST", body: JSON.stringify({ email }) }),
 };
+
+/* ── Contact ── */
+export const contactAPI = {
+  send: (body) => request("/contact", { method: "POST", body: JSON.stringify(body) }),
+};

@@ -9,6 +9,7 @@ const { connectDB }           = require("./db/connection");
 const authRoutes              = require("./routes/auth");
 const orderRoutes             = require("./routes/orders");
 const subscribeRoutes         = require("./routes/subscribe");
+const contactRoutes           = require("./routes/contact");
 const { verifyEmailConnection } = require("./utils/email");
 
 const app  = express();
@@ -49,6 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth",      authRoutes);
 app.use("/api/orders",   orderRoutes);
 app.use("/api/subscribe", subscribeRoutes);
+app.use("/api/contact",  contactRoutes);
 
 /* ── Health check ── */
 app.get("/api/health", (req, res) =>

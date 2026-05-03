@@ -574,9 +574,9 @@ const Landing = () => {
                 Premium automotive accessories for every car enthusiast. Quality you can trust.
               </p>
               <div className="flex gap-4 mt-5">
-                <a href="#" className="hover:text-primary duration-200"><FaInstagram className="text-xl" /></a>
-                <a href="#" className="hover:text-primary duration-200"><FaFacebook className="text-xl" /></a>
-                <a href="#" className="hover:text-primary duration-200"><FaLinkedin className="text-xl" /></a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary duration-200"><FaInstagram className="text-xl" /></a>
+                <a href="https://facebook.com"  target="_blank" rel="noopener noreferrer" className="hover:text-primary duration-200"><FaFacebook className="text-xl" /></a>
+                <a href="https://linkedin.com"  target="_blank" rel="noopener noreferrer" className="hover:text-primary duration-200"><FaLinkedin className="text-xl" /></a>
               </div>
             </div>
 
@@ -584,9 +584,14 @@ const Landing = () => {
             <div>
               <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
               <ul className="space-y-2 text-sm">
-                {["Home", "Shop", "About", "Contact"].map((l) => (
-                  <li key={l}>
-                    <a href="#" className="hover:text-primary duration-200 hover:translate-x-1 inline-block">{l}</a>
+                {[
+                  { label: "Home",    to: "/" },
+                  { label: "Shop",    to: "/shop" },
+                  { label: "About",   to: "/about" },
+                  { label: "Contact", to: "/contact" },
+                ].map((l) => (
+                  <li key={l.label}>
+                    <Link to={l.to} className="hover:text-primary duration-200 hover:translate-x-1 inline-block">{l.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -598,7 +603,7 @@ const Landing = () => {
               <ul className="space-y-2 text-sm">
                 {["Tyres & Wheels", "Interior", "Electronics", "Performance"].map((l) => (
                   <li key={l}>
-                    <a href="#" className="hover:text-primary duration-200 hover:translate-x-1 inline-block">{l}</a>
+                    <Link to="/shop" className="hover:text-primary duration-200 hover:translate-x-1 inline-block">{l}</Link>
                   </li>
                 ))}
               </ul>
@@ -610,6 +615,7 @@ const Landing = () => {
               <ul className="space-y-2 text-sm">
                 <li><Link to="/login" className="hover:text-primary duration-200 hover:translate-x-1 inline-block">Sign In</Link></li>
                 <li><Link to="/register" className="hover:text-primary duration-200 hover:translate-x-1 inline-block">Create Account</Link></li>
+                <li><Link to="/orders" className="hover:text-primary duration-200 hover:translate-x-1 inline-block">My Orders</Link></li>
                 <li><Link to="/forgot-password" className="hover:text-primary duration-200 hover:translate-x-1 inline-block">Forgot Password</Link></li>
               </ul>
             </div>
@@ -617,9 +623,11 @@ const Landing = () => {
 
           <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
             <p>© {new Date().getFullYear()} Motorly. All rights reserved.</p>
-            <div className="flex gap-4">
-              <a href="#" className="hover:text-primary duration-200">Privacy Policy</a>
-              <a href="#" className="hover:text-primary duration-200">Terms of Service</a>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Link to="/privacy" className="hover:text-primary duration-200">Privacy Policy</Link>
+              <Link to="/terms"   className="hover:text-primary duration-200">Terms of Service</Link>
+              <Link to="/contact" className="hover:text-primary duration-200">Contact Us</Link>
+              <Link to="/about"   className="hover:text-primary duration-200">About Us</Link>
             </div>
           </div>
         </div>

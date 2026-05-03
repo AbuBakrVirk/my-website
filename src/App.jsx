@@ -24,6 +24,12 @@ import Register       from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword  from "./pages/ResetPassword";
 import Orders         from "./pages/Orders";
+import About          from "./pages/About";
+import Contact        from "./pages/Contact";
+import PrivacyPolicy  from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import NotFound       from "./pages/NotFound";
+import Account        from "./pages/Account";
 
 /* ─────────────────────────────────────────
    Shop layout
@@ -102,18 +108,51 @@ const ShopLayout = () => {
 /* ─────────────────────────────────────────
    Root app
 ───────────────────────────────────────── */
+const AppRoutes = () => {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary
+            flex items-center justify-center animate-pulse">
+            <span className="text-white text-xl font-bold">M</span>
+          </div>
+          <div className="flex gap-1">
+            {[0,1,2].map((i) => (
+              <div key={i} className="w-2 h-2 rounded-full bg-primary animate-bounce"
+                style={{ animationDelay: `${i * 0.15}s` }} />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Routes>
+      <Route path="/"                element={<Landing />} />
+      <Route path="/shop"            element={<ShopLayout />} />
+      <Route path="/login"           element={<Login />} />
+      <Route path="/register"        element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password"  element={<ResetPassword />} />
+      <Route path="/orders"          element={<Orders />} />
+      <Route path="/about"           element={<About />} />
+      <Route path="/contact"         element={<Contact />} />
+      <Route path="/privacy"         element={<PrivacyPolicy />} />
+      <Route path="/terms"           element={<TermsOfService />} />
+      <Route path="/account"         element={<Account />} />
+      <Route path="*"                element={<NotFound />} />
+    </Routes>
+  );
+};
+
 const App = () => (
   <AuthProvider>
     <CartProvider>
-      <Routes>
-        <Route path="/"                element={<Landing />} />
-        <Route path="/shop"            element={<ShopLayout />} />
-        <Route path="/login"           element={<Login />} />
-        <Route path="/register"        element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password"  element={<ResetPassword />} />
-        <Route path="/orders"          element={<Orders />} />
-      </Routes>
+      <AppRoutes />
     </CartProvider>
   </AuthProvider>
 );
