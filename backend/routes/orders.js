@@ -98,16 +98,12 @@ router.post(
       createdAt:     new Date().toISOString(),
     });
 
-    // Send confirmation email — await it so errors are visible in server logs
-    try {
-      await sendOrderConfirmationEmail({
-        to:    req.user.email,
-        name:  req.user.name,
-        order,
-      });
-    } catch (emailErr) {
-      console.error("⚠️  Order email failed (order still placed):", emailErr.message);
-    }
+    // Fire-and-forget — respond immediately, email in background
+    sendOrderConfirmationEmail({
+      to:    req.user.email,
+      name:  req.user.name,
+      order,
+    }).catch((err) => console.error("Order email failed:", err.message));
 
     res.status(201).json({
       success: true,

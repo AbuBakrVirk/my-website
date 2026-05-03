@@ -1,10 +1,10 @@
 /**
  * Central API client.
- * In development, Vite proxies /api → http://localhost:5000/api
- * so we use a relative path. In production set VITE_API_URL.
+ * - Development: BASE_URL is empty → Vite proxies /api → http://localhost:5000
+ * - Production:  set VITE_API_URL=https://motorly.up.railway.app/api in Vercel env vars
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL || "https://motorly.up.railway.app/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "";
 
 const getToken = () => localStorage.getItem("motorly_token");
 

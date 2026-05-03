@@ -30,10 +30,9 @@ router.post(
 
     subscribers.add(email);
 
-    // Send confirmation email to subscriber
-    await sendSubscriptionEmail({ to: email }).catch((err) =>
-      console.error("Subscription email failed:", err.message)
-    );
+    // Fire-and-forget — respond immediately, email in background
+    sendSubscriptionEmail({ to: email })
+      .catch((err) => console.error("Subscription email failed:", err.message));
 
     res.json({
       success: true,

@@ -1,11 +1,14 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
 const router = express.Router();
 
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
+
+const FROM   = process.env.RESEND_FROM  || "Motorly <onboarding@resend.dev>";
+const ADMIN  = process.env.ADMIN_EMAIL  || process.env.GMAIL_USER;
 
 /* ═══════════════════════════════════════
    POST /api/contact
@@ -26,69 +29,59 @@ router.post(
 
     const { name, email, subject, message } = req.body;
 
-    // Send notification to admin
-    if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
-      });
-
-      // Email to admin (fire and forget)
-      transporter.sendMail({
-        from: `"Motorly Contact" <${process.env.GMAIL_USER}>`,
-        to: process.env.GMAIL_USER,
-        subject: `[Contact Form] ${subject}`,
-        html: `
-          <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;">
-            <h2 style="color:#fea928;">New Contact Form Submission</h2>
-            <table style="width:100%;border-collapse:collapse;">
-              <tr><td style="padding:8px 0;color:#6b7280;font-size:14px;width:100px;">Name:</td><td style="padding:8px 0;font-size:14px;font-weight:600;">${name}</td></tr>
-              <tr><td style="padding:8px 0;color:#6b7280;font-size:14px;">Email:</td><td style="padding:8px 0;font-size:14px;"><a href="mailto:${email}">${email}</a></td></tr>
-              <tr><td style="padding:8px 0;color:#6b7280;font-size:14px;">Subject:</td><td style="padding:8px 0;font-size:14px;font-weight:600;">${subject}</td></tr>
-            </table>
-            <div style="background:#f9fafb;border-radius:8px;padding:16px;margin-top:16px;">
-              <p style="margin:0;font-size:14px;color:#374151;line-height:1.7;">${message.replace(/\n/g, "<br>")}</p>
-            </div>
-            <p style="margin-top:16px;font-size:12px;color:#9ca3af;">Reply directly to this email to respond to ${name}.</p>
-          </div>
-        `,
-        replyTo: email,
-      }).catch((err) => console.error("Contact admin email failed:", err.message));
-
-      // Auto-reply to sender (fire and forget)
-      transporter.sendMail({
-        from: `"Motorly Support" <${process.env.GMAIL_USER}>`,
-        to: email,
-        subject: "We received your message — Motorly",
-        html: `
-          <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#f3f4f6;padding:40px 16px;">
-            <div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-              <div style="background:linear-gradient(135deg,#fea928,#ed8900);padding:32px 40px;text-align:center;">
-                <h1 style="margin:0;color:#fff;font-size:28px;font-weight:800;">🚗 Motorly</h1>
-              </div>
-              <div style="padding:32px 40px;">
-                <h2 style="margin:0 0 12px;color:#111827;font-size:20px;">Hi ${name}! 👋</h2>
-                <p style="color:#6b7280;font-size:15px;line-height:1.7;margin:0 0 16px;">
-                  Thanks for reaching out. We've received your message and will get back to you within <strong>24 hours</strong>.
-                </p>
-                <div style="background:#f9fafb;border-radius:8px;padding:16px;border-left:4px solid #fea928;">
-                  <p style="margin:0;font-size:13px;color:#6b7280;font-weight:600;">Your message:</p>
-                  <p style="margin:8px 0 0;font-size:14px;color:#374151;">${message.replace(/\n/g, "<br>")}</p>
-                </div>
-              </div>
-              <div style="background:#f9fafb;padding:16px 40px;text-align:center;border-top:1px solid #f3f4f6;">
-                <p style="margin:0;color:#9ca3af;font-size:12px;">© ${new Date().getFullYear()} Motorly. All rights reserved.</p>
-              </div>
-            </div>
-          </div>
-        `,
-      }).catch((err) => console.error("Contact auto-reply failed:", err.message));
-    }
-
+    // Respond immediately — emails send in background
     res.json({
       success: true,
       message: "Message sent successfully! We'll get back to you within 24 hours.",
     });
+
+    // Fire-and-forget emails after response is sent
+    if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY.startsWith("re_")) {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+
+      if (ADMIN) {
+        resend.emails.send({
+          from: FROM,
+          to: [ADMIN],
+          replyTo: email,
+          subject: `[Contact] ${subject}`,
+          html: `<div style="font-family:sans-serif;padding:24px;max-width:600px;">
+            <h2 style="color:#fea928;">New Contact Message</h2>
+            <p><strong>From:</strong> ${name} &lt;${email}&gt;</p>
+            <p><strong>Subject:</strong> ${subject}</p>
+            <div style="background:#f9fafb;padding:16px;border-radius:8px;margin-top:12px;">
+              <p style="margin:0;white-space:pre-wrap;">${message}</p>
+            </div>
+          </div>`,
+        }).catch((e) => console.error("Contact admin email failed:", e.message));
+      }
+
+      resend.emails.send({
+        from: FROM,
+        to: [email],
+        subject: "We received your message — Motorly 🚗",
+        html: `<div style="font-family:sans-serif;padding:24px;max-width:600px;">
+          <div style="background:linear-gradient(135deg,#fea928,#ed8900);padding:24px;border-radius:12px 12px 0 0;text-align:center;">
+            <h1 style="margin:0;color:#fff;font-size:24px;">🚗 Motorly</h1>
+          </div>
+          <div style="background:#fff;padding:32px;border:1px solid #f3f4f6;border-radius:0 0 12px 12px;">
+            <h2 style="margin:0 0 12px;color:#111827;">Hi ${name}! 👋</h2>
+            <p style="color:#6b7280;line-height:1.7;">
+              Thanks for reaching out. We've received your message and will reply within <strong>24 hours</strong>.
+            </p>
+            <div style="background:#f9fafb;border-left:4px solid #fea928;padding:16px;border-radius:4px;margin-top:16px;">
+              <p style="margin:0;font-size:13px;color:#6b7280;font-weight:600;">Your message:</p>
+              <p style="margin:8px 0 0;color:#374151;white-space:pre-wrap;">${message}</p>
+            </div>
+          </div>
+          <p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:16px;">
+            © ${new Date().getFullYear()} Motorly. All rights reserved.
+          </p>
+        </div>`,
+      }).catch((e) => console.error("Contact auto-reply failed:", e.message));
+    } else {
+      console.log(`📧 [EMAIL SKIPPED] Contact from ${email} — set RESEND_API_KEY in Railway`);
+    }
   })
 );
 
