@@ -94,10 +94,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-const server = app.listen(PORT, async () => {
+const server = app.listen(PORT, () => {
   console.log(`\n🚗  Motorly API running on port ${PORT}`);
   console.log(`📋  Health: http://localhost:${PORT}/api/health\n`);
-  await connectDB();
+  // Connect to DB and email after server is already listening
+  // so healthcheck passes immediately
+  connectDB().catch((err) => console.error("DB connect error:", err.message));
   verifyEmailConnection();
 });
 
