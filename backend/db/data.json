@@ -1,0 +1,96 @@
+{
+  "users": [
+    {
+      "id": "f5f8499f-13fc-4a7b-a49e-26bf746c4b74",
+      "firstName": "Abu Bakar",
+      "lastName": "Virk",
+      "name": "Abu Bakar Virk",
+      "email": "abubakarv505@gmail.com",
+      "phone": "",
+      "password": "$2b$12$HUa9vjBIiR/gN4tWbMdTs.ufrLAGA3xibxOTB1GcWMw8dfOK0362a",
+      "createdAt": "2026-04-25T17:51:51.978Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "ORD-1777139573312-5DAC90",
+      "userId": "f5f8499f-13fc-4a7b-a49e-26bf746c4b74",
+      "userEmail": "abubakarv505@gmail.com",
+      "userName": "Abu Bakar Virk",
+      "items": [
+        {
+          "productId": "p3",
+          "name": "Full Car Cover",
+          "price": 79.99,
+          "qty": 1,
+          "lineTotal": 79.99
+        }
+      ],
+      "address": "virk house, Pasrur 51480",
+      "phone": "03436248359",
+      "paymentMethod": "Cash on Delivery",
+      "subtotal": 79.99,
+      "shipping": 9.99,
+      "tax": 6.4,
+      "total": 96.38,
+      "status": "confirmed",
+      "createdAt": "2026-04-25T17:52:53.313Z"
+    },
+    {
+      "id": "ORD-1777140945360-EBEAF2",
+      "userId": "f5f8499f-13fc-4a7b-a49e-26bf746c4b74",
+      "userEmail": "abubakarv505@gmail.com",
+      "userName": "Abu Bakar Virk",
+      "items": [
+        {
+          "productId": "p2",
+          "name": "Premium Car Mats (Red & Black)",
+          "price": 34.99,
+          "qty": 1,
+          "lineTotal": 34.99
+        }
+      ],
+      "address": "Virk House, Pasrur 51480",
+      "phone": "034465464",
+      "paymentMethod": "Cash on Delivery",
+      "subtotal": 34.99,
+      "shipping": 9.99,
+      "tax": 2.8,
+      "total": 47.78,
+      "status": "confirmed",
+      "createdAt": "2026-04-25T18:15:45.363Z"
+    },
+    {
+      "id": "ORD-1777385040811-486839",
+      "userId": "f5f8499f-13fc-4a7b-a49e-26bf746c4b74",
+      "userEmail": "abubakarv505@gmail.com",
+      "userName": "Abu Bakar Virk",
+      "items": [
+        {
+          "productId": "p3",
+          "name": "Full Car Cover",
+          "price": 79.99,
+          "qty": 1,
+          "lineTotal": 79.99
+        },
+        {
+          "productId": "p5",
+          "name": "Chrome Rims Set (4)",
+          "price": 299.99,
+          "qty": 1,
+          "lineTotal": 299.99
+        }
+      ],
+      "address": "Virk House, Pasrur 51480",
+      "phone": "33456756543",
+      "paymentMethod": "Cash on Delivery",
+      "subtotal": 379.98,
+      "shipping": 0,
+      "tax": 30.4,
+      "total": 410.38,
+      "status": "confirmed",
+      "createdAt": "2026-04-28T14:04:00.811Z"
+    }
+  ],
+  "resetTokens": []
+}

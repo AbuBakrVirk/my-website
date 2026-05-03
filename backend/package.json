@@ -6,7 +6,10 @@
   "type": "commonjs",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "dev:frontend": "npm run dev --prefix ../frontend",
+    "kill": "npx kill-port 5000",
+    "dev:all": "npm run kill && concurrently --kill-others-on-fail \"nodemon index.js\" \"npm run dev --prefix ../frontend\""
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -24,6 +27,7 @@
     "resend": "^6.12.2"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "nodemon": "^3.1.0"
   }
 }

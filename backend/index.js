@@ -24,6 +24,7 @@ app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 const allowedOrigins = [
   process.env.CLIENT_URL || "http://localhost:5173",
   "http://localhost:5173",
+  "http://localhost:5174",
   "http://localhost:4173",
 ];
 
@@ -31,6 +32,10 @@ app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
+      // Allow any localhost port in development
+      if (process.env.NODE_ENV === "development" && /^http:\/\/localhost:\d+$/.test(origin)) {
+        return callback(null, true);
+      }
       if (allowedOrigins.some((o) => origin.startsWith(o))) {
         return callback(null, true);
       }
@@ -59,9 +64,8 @@ app.get("/api/health", (req, res) =>
 
 /* ── Serve React frontend in production ── */
 if (process.env.NODE_ENV === "production") {
-  const distPath = path.join(__dirname, "../dist");
+  const distPath = path.join(__dirname, "../frontend/dist");
   app.use(express.static(distPath));
-  // All non-API routes → React app (client-side routing)
   app.get("*", (req, res) => {
     res.sendFile(path.join(distPath, "index.html"));
   });
@@ -86,9 +90,19 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, async () => {
+const server = app.listen(PORT, async () => {
   console.log(`\n🚗  Motorly API running on port ${PORT}`);
   console.log(`📋  Health: http://localhost:${PORT}/api/health\n`);
   await connectDB();
   verifyEmailConnection();
+});
+
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`\n❌  Port ${PORT} is already in use.`);
+    console.error(`   Run this to free it:  npx kill-port ${PORT}\n`);
+    process.exit(1);
+  } else {
+    throw err;
+  }
 });
