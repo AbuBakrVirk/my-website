@@ -4,7 +4,7 @@
  * so we use a relative path. In production set VITE_API_URL.
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL || "/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "https://motorly.up.railway.app/api";
 
 const getToken = () => localStorage.getItem("motorly_token");
 
