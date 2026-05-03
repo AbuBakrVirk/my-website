@@ -19,9 +19,12 @@ const request = async (endpoint, options = {}) => {
   let res;
   try {
     res = await fetch(`${BASE_URL}${endpoint}`, { ...options, headers });
-  } catch {
+  } catch (err) {
+    const isDev = import.meta.env.DEV;
     throw new Error(
-      "Cannot connect to the server. Make sure the backend is running:\n  cd server && npm run dev"
+      isDev
+        ? "Cannot connect to the server. Make sure the backend is running:\n  cd backend && npm run dev"
+        : "Service temporarily unavailable. Please try again in a moment."
     );
   }
 

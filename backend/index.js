@@ -22,24 +22,28 @@ app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
 /* ── CORS ── */
 const allowedOrigins = [
-  process.env.CLIENT_URL || "http://localhost:5173",
+  process.env.CLIENT_URL,
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:4173",
   "https://motorly.up.railway.app",
-];
+].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
+      // Allow requests with no origin (Postman, mobile apps, curl)
       if (!origin) return callback(null, true);
-      // Allow any localhost port in development
-      if (process.env.NODE_ENV === "development" && /^http:\/\/localhost:\d+$/.test(origin)) {
-        return callback(null, true);
-      }
-      if (allowedOrigins.some((o) => origin.startsWith(o))) {
-        return callback(null, true);
-      }
+      // Allow any localhost in development
+      if (/^http:\/\/localhost:\d+$/.test(origin)) return callback(null, true);
+      // Allow any Vercel preview/production domain
+      if (origin.endsWith(".vercel.app")) return callback(null, true);
+      // Allow any Railway domain
+      if (origin.endsWith(".railway.app")) return callback(null, true);
+      // Allow explicitly listed origins
+      if (allowedOrigins.some((o) => origin.startsWith(o))) return callback(null, true);
+
+      console.warn(`CORS blocked: ${origin}`);
       callback(new Error(`CORS blocked: ${origin}`));
     },
     credentials: true,
