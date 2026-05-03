@@ -33,8 +33,8 @@ router.post(
         auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
       });
 
-      // Email to admin
-      await transporter.sendMail({
+      // Email to admin (fire and forget)
+      transporter.sendMail({
         from: `"Motorly Contact" <${process.env.GMAIL_USER}>`,
         to: process.env.GMAIL_USER,
         subject: `[Contact Form] ${subject}`,
@@ -55,8 +55,8 @@ router.post(
         replyTo: email,
       }).catch((err) => console.error("Contact admin email failed:", err.message));
 
-      // Auto-reply to sender
-      await transporter.sendMail({
+      // Auto-reply to sender (fire and forget)
+      transporter.sendMail({
         from: `"Motorly Support" <${process.env.GMAIL_USER}>`,
         to: email,
         subject: "We received your message — Motorly",
@@ -75,9 +75,6 @@ router.post(
                   <p style="margin:0;font-size:13px;color:#6b7280;font-weight:600;">Your message:</p>
                   <p style="margin:8px 0 0;font-size:14px;color:#374151;">${message.replace(/\n/g, "<br>")}</p>
                 </div>
-                <p style="margin:20px 0 0;color:#9ca3af;font-size:13px;">
-                  In the meantime, feel free to browse our store or check your orders.
-                </p>
               </div>
               <div style="background:#f9fafb;padding:16px 40px;text-align:center;border-top:1px solid #f3f4f6;">
                 <p style="margin:0;color:#9ca3af;font-size:12px;">© ${new Date().getFullYear()} Motorly. All rights reserved.</p>
