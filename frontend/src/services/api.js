@@ -1,10 +1,12 @@
 /**
  * Central API client.
- * - Development: BASE_URL is empty → Vite proxies /api → http://localhost:5000
- * - Production:  set VITE_API_URL=https://motorly.up.railway.app/api in Vercel env vars
+ * - Development: Vite proxies /api → http://localhost:5000 (BASE_URL = "")
+ * - Production:  VITE_API_URL must be set in Vercel env vars
+ *                e.g. https://motorly.up.railway.app/api
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL || "";
+const BASE_URL = import.meta.env.VITE_API_URL
+  ?? (import.meta.env.DEV ? "" : "https://motorly.up.railway.app/api");
 
 const getToken = () => localStorage.getItem("motorly_token");
 

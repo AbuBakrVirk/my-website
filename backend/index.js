@@ -71,17 +71,16 @@ app.get("/api/health", (req, res) =>
 if (process.env.NODE_ENV === "production") {
   const distPath = path.join(__dirname, "../frontend/dist");
   app.use(express.static(distPath));
-  app.get("*", (req, res) => {
+  // Only serve index.html for non-API routes
+  app.get(/^(?!\/api).*/, (req, res) => {
     res.sendFile(path.join(distPath, "index.html"));
   });
 }
 
-/* ── 404 handler (dev only — production uses React catch-all) ── */
-if (process.env.NODE_ENV !== "production") {
-  app.use((req, res) =>
-    res.status(404).json({ success: false, message: `Route ${req.method} ${req.path} not found.` })
-  );
-}
+/* ── 404 handler for unknown API routes ── */
+app.use((req, res) =>
+  res.status(404).json({ success: false, message: `Route ${req.method} ${req.path} not found.` })
+);
 
 /* ── Global error handler ── */
 app.use((err, req, res, next) => {
