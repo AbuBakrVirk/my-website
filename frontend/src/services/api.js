@@ -1,12 +1,12 @@
 /**
  * Central API client.
- * - Development: Vite proxies /api → http://localhost:5000 (BASE_URL = "")
- * - Production:  VITE_API_URL must be set in Vercel env vars
- *                e.g. https://motorly.up.railway.app/api
+ * - Development: BASE_URL="" → requests go to /api/... → Vite proxies to localhost:5000
+ * - Production:  BASE_URL="https://motorly.up.railway.app" → requests go to full URL
  */
 
 const BASE_URL = import.meta.env.VITE_API_URL
-  ?? (import.meta.env.DEV ? "" : "https://motorly.up.railway.app/api");
+  ? import.meta.env.VITE_API_URL.replace(/\/api$/, "")
+  : "";
 
 const getToken = () => localStorage.getItem("motorly_token");
 
@@ -48,7 +48,7 @@ const request = async (endpoint, options = {}) => {
   }
 
   if (!res.ok) {
-    const msg = data.errors?.[0]?.msg || data.message || "Something went wrong. Please try again.";
+    const msg = data.errors?.[0]?.msg || data.message || `Server error (${res.status}). Please try again.`;
     throw new Error(msg);
   }
 
@@ -57,27 +57,27 @@ const request = async (endpoint, options = {}) => {
 
 /* ── Auth ── */
 export const authAPI = {
-  register: (body)            => request("/auth/register",       { method: "POST", body: JSON.stringify(body) }),
-  login:    (body)            => request("/auth/login",          { method: "POST", body: JSON.stringify(body) }),
-  me:       ()                => request("/auth/me"),
-  forgotPassword: (email)     => request("/auth/forgot-password",{ method: "POST", body: JSON.stringify({ email }) }),
-  resetPassword: (token, pwd) => request("/auth/reset-password", { method: "POST", body: JSON.stringify({ token, password: pwd }) }),
+  register: (body)            => request("/api/auth/register",       { method: "POST", body: JSON.stringify(body) }),
+  login:    (body)            => request("/api/auth/login",          { method: "POST", body: JSON.stringify(body) }),
+  me:       ()                => request("/api/auth/me"),
+  forgotPassword: (email)     => request("/api/auth/forgot-password",{ method: "POST", body: JSON.stringify({ email }) }),
+  resetPassword: (token, pwd) => request("/api/auth/reset-password", { method: "POST", body: JSON.stringify({ token, password: pwd }) }),
 };
 
 /* ── Orders ── */
 export const ordersAPI = {
-  getProducts: ()     => request("/orders/products"),
-  placeOrder:  (body) => request("/orders",     { method: "POST", body: JSON.stringify(body) }),
-  getMyOrders: ()     => request("/orders"),
-  getOrder:    (id)   => request(`/orders/${id}`),
+  getProducts: ()     => request("/api/orders/products"),
+  placeOrder:  (body) => request("/api/orders",     { method: "POST", body: JSON.stringify(body) }),
+  getMyOrders: ()     => request("/api/orders"),
+  getOrder:    (id)   => request(`/api/orders/${id}`),
 };
 
 /* ── Subscribe ── */
 export const subscribeAPI = {
-  subscribe: (email) => request("/subscribe", { method: "POST", body: JSON.stringify({ email }) }),
+  subscribe: (email) => request("/api/subscribe", { method: "POST", body: JSON.stringify({ email }) }),
 };
 
 /* ── Contact ── */
 export const contactAPI = {
-  send: (body) => request("/contact", { method: "POST", body: JSON.stringify(body) }),
+  send: (body) => request("/api/contact", { method: "POST", body: JSON.stringify(body) }),
 };
