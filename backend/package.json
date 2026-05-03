@@ -1,5 +1,5 @@
 {
-  "name": "motorly-server",
+  "name": "motorly-backend",
   "version": "1.0.0",
   "description": "Motorly backend API",
   "main": "index.js",
@@ -7,9 +7,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "dev:frontend": "npm run dev --prefix ../frontend",
-    "kill": "npx kill-port 5000",
-    "dev:all": "npm run kill && concurrently --kill-others-on-fail \"nodemon index.js\" \"npm run dev --prefix ../frontend\""
+    "dev:all": "concurrently --kill-others-on-fail \"nodemon index.js\" \"npm run dev --prefix ../frontend\""
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
