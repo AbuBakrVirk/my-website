@@ -61,7 +61,15 @@ const ShopLayout = () => {
   return (
     <div className="bg-white dark:bg-gray-900 dark:text-white duration-200">
       <Navbar handleOrderPopup={handleOrderPopup} onCartOpen={handleCartOpen} />
-      <div id="home"><Hero handleOrderPopup={handleOrderPopup} /></div>
+      <div id="home">
+        <Hero
+          handleOrderPopup={handleOrderPopup}
+          onShopNow={() => {
+            const el = document.getElementById("products");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+        />
+      </div>
       <div id="products"><Products handleOrderPopup={handleOrderPopup} /></div>
       <div id="top-rated"><TopProducts handleOrderPopup={handleOrderPopup} /></div>
       <div id="interior"><Banner /></div>

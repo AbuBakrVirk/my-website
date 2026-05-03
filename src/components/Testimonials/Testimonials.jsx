@@ -75,13 +75,14 @@ export const Testimonials = () => {
         </div>
 
         {/* Slider */}
-        <div data-aos="fade-up">
+        <div data-aos="fade-up" className="testimonials-slider">
           <Slider {...settings}>
             {TestimonialsData.map((t) => (
-              <div key={t.id} className="px-3 py-4">
+              <div key={t.id} className="px-3 py-4 h-full">
                 <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-card
                   hover:shadow-card-hover border border-gray-100 dark:border-gray-800
-                  transition-all duration-300 hover:-translate-y-1 relative overflow-hidden h-full">
+                  transition-all duration-300 hover:-translate-y-1 relative overflow-hidden
+                  flex flex-col min-h-[220px]">
 
                   {/* Quote icon */}
                   <FaQuoteLeft className="text-primary/10 text-5xl absolute top-4 right-4" />
@@ -93,17 +94,17 @@ export const Testimonials = () => {
                     ))}
                   </div>
 
-                  {/* Text */}
-                  <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 line-clamp-4">
+                  {/* Text — flex-1 pushes author to bottom */}
+                  <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 flex-1">
                     "{t.text}"
                   </p>
 
-                  {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+                  {/* Author — always at bottom */}
+                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-800 mt-auto">
                     <img
                       src={t.img}
                       alt={t.name}
-                      className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20"
+                      className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20 flex-shrink-0"
                     />
                     <div>
                       <p className="font-bold text-sm dark:text-white">{t.name}</p>

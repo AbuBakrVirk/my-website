@@ -33,7 +33,7 @@ const ImageList = [
   },
 ];
 
-const Hero = ({ handleOrderPopup }) => {
+const Hero = ({ handleOrderPopup, onShopNow }) => {
   const settings = {
     dots: true,
     arrows: false,
@@ -121,17 +121,17 @@ const Hero = ({ handleOrderPopup }) => {
                     className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-start"
                   >
                     <button
-                      onClick={handleOrderPopup}
+                      onClick={onShopNow}
                       className="group inline-flex items-center justify-center gap-2
                         bg-gradient-to-r from-primary to-secondary text-white
                         font-bold py-3 px-7 rounded-full hover:shadow-glow
                         hover:scale-105 duration-300 text-sm sm:text-base"
                     >
-                      Order Now
+                      Shop Now
                       <FaArrowRight className="group-hover:translate-x-1 transition-transform duration-200" />
                     </button>
                     <button
-                      onClick={handleOrderPopup}
+                      onClick={onShopNow}
                       className="inline-flex items-center justify-center gap-2
                         border-2 border-primary/40 text-primary dark:text-primary
                         font-semibold py-3 px-7 rounded-full hover:bg-primary/5

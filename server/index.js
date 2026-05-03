@@ -8,6 +8,7 @@ const morgan  = require("morgan");
 const { connectDB }           = require("./db/connection");
 const authRoutes              = require("./routes/auth");
 const orderRoutes             = require("./routes/orders");
+const subscribeRoutes         = require("./routes/subscribe");
 const { verifyEmailConnection } = require("./utils/email");
 
 const app  = express();
@@ -45,8 +46,9 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 
 /* ── Routes ── */
-app.use("/api/auth",   authRoutes);
-app.use("/api/orders", orderRoutes);
+app.use("/api/auth",      authRoutes);
+app.use("/api/orders",   orderRoutes);
+app.use("/api/subscribe", subscribeRoutes);
 
 /* ── Health check ── */
 app.get("/api/health", (req, res) =>

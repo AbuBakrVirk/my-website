@@ -65,3 +65,15 @@
     @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover;
   }
 }
+
+/* ── Testimonials equal-height cards ── */
+.testimonials-slider .slick-track {
+  display: flex !important;
+  align-items: stretch;
+}
+.testimonials-slider .slick-slide {
+  height: auto !important;
+}
+.testimonials-slider .slick-slide > div {
+  height: 100%;
+}

@@ -66,3 +66,8 @@ export const ordersAPI = {
   getMyOrders: ()     => request("/orders"),
   getOrder:    (id)   => request(`/orders/${id}`),
 };
+
+/* ── Subscribe ── */
+export const subscribeAPI = {
+  subscribe: (email) => request("/subscribe", { method: "POST", body: JSON.stringify({ email }) }),
+};

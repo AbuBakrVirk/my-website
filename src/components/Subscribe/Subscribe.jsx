@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
 import { MdEmail, MdArrowForward, MdCheckCircle } from 'react-icons/md';
 import { FaBell } from 'react-icons/fa';
+import { subscribeAPI } from '../../services/api';
 
 export const Subscribe = () => {
-  const [email, setEmail]       = useState("");
+  const [email,     setEmail]     = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError]       = useState("");
+  const [loading,   setLoading]   = useState(false);
+  const [error,     setError]     = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setError("Please enter a valid email address.");
       return;
     }
     setError("");
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      await subscribeAPI.subscribe(email);
+      setSubmitted(true);
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -43,10 +53,13 @@ export const Subscribe = () => {
         </p>
 
         {submitted ? (
-          <div className="flex items-center justify-center gap-3 bg-green-500/10 border border-green-500/30
-            rounded-2xl px-6 py-4 text-green-400 font-semibold animate-fade-in">
-            <MdCheckCircle className="text-2xl flex-shrink-0" />
-            <span>You're subscribed! Welcome to the Motorly family 🚗</span>
+          <div className="flex flex-col items-center gap-3 bg-green-500/10 border border-green-500/30
+            rounded-2xl px-6 py-6 text-green-400 animate-fade-in">
+            <MdCheckCircle className="text-4xl" />
+            <p className="font-bold text-base">You're subscribed!</p>
+            <p className="text-sm text-green-400/80">
+              Check your inbox — we sent you a confirmation + a welcome discount code 🎁
+            </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
@@ -57,18 +70,32 @@ export const Subscribe = () => {
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setError(""); }}
                 placeholder="your@email.com"
+                disabled={loading}
                 className={`w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/10 border text-white
                   placeholder-gray-500 focus:outline-none focus:border-primary transition-colors duration-200
+                  disabled:opacity-60
                   ${error ? "border-red-500" : "border-white/10 hover:border-white/20"}`}
               />
             </div>
             <button
               type="submit"
+              disabled={loading}
               className="flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-secondary
                 text-white font-bold px-6 py-3.5 rounded-xl hover:shadow-glow hover:scale-105
-                duration-200 whitespace-nowrap"
+                duration-200 whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed
+                disabled:hover:scale-100"
             >
-              Subscribe <MdArrowForward />
+              {loading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                  </svg>
+                  Subscribing...
+                </>
+              ) : (
+                <>Subscribe <MdArrowForward /></>
+              )}
             </button>
           </form>
         )}

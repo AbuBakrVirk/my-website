@@ -272,9 +272,60 @@ const sendOrderConfirmationEmail = ({ to, name, order }) => {
   }, `OrderConfirm #${order.id} / ${name}`);
 };
 
+/* ════════════════════════════════════════
+   4. Subscription confirmation
+════════════════════════════════════════ */
+const sendSubscriptionEmail = ({ to }) =>
+  safeSend({
+    to,
+    subject: "You're subscribed to Motorly! 🚗",
+    html: wrap(`
+      ${topBar("🔔", "Newsletter Subscription")}
+      <tr><td style="padding:40px;">
+        <h2 style="margin:0 0 12px;color:#111827;font-size:22px;">You're in! 🎉</h2>
+        <p style="margin:0 0 20px;color:#6b7280;font-size:15px;line-height:1.7;">
+          Thanks for subscribing to Motorly updates. You'll be the first to know about:
+        </p>
+        <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:24px;">
+          ${[
+            ["🆕", "New product arrivals"],
+            ["💰", "Exclusive deals & discounts"],
+            ["⚡", "Performance tips & guides"],
+            ["🎁", "Member-only offers"],
+          ].map(([icon, text]) => `
+            <tr>
+              <td style="padding:8px 0;font-size:14px;color:#374151;">
+                <span style="margin-right:10px;">${icon}</span>${text}
+              </td>
+            </tr>`).join("")}
+        </table>
+        <div style="background:#fff7ed;border-left:4px solid #fea928;border-radius:8px;padding:16px 20px;margin:24px 0;">
+          <p style="margin:0;color:#92400e;font-size:14px;font-weight:600;">🎉 Welcome Gift</p>
+          <p style="margin:6px 0 0;color:#78350f;font-size:13px;">
+            Use code <strong>SUBSCRIBE10</strong> for 10% off your next order!
+          </p>
+        </div>
+        <table cellpadding="0" cellspacing="0" style="margin:28px 0;">
+          <tr>
+            <td style="background:linear-gradient(135deg,#fea928,#ed8900);border-radius:50px;padding:14px 32px;">
+              <a href="${process.env.CLIENT_URL}/shop"
+                 style="color:#fff;text-decoration:none;font-weight:700;font-size:15px;">
+                Shop Now →
+              </a>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:0;color:#9ca3af;font-size:12px;line-height:1.6;">
+          You can unsubscribe at any time by replying to this email.
+        </p>
+      </td></tr>
+    `),
+  }, `Subscription / ${to}`);
+
 module.exports = {
   verifyEmailConnection,
   sendWelcomeEmail,
   sendPasswordResetEmail,
   sendOrderConfirmationEmail,
+  sendSubscriptionEmail,
 };
