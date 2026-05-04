@@ -158,14 +158,23 @@ const sendPasswordResetEmail = ({ to, name, resetUrl }) =>
 const sendOrderConfirmationEmail = ({ to, name, order }) => {
   const rows = order.items.map((i) => `
     <tr>
-      <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;color:#374151;font-size:14px;">${i.name}</td>
-      <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;color:#374151;font-size:14px;text-align:center;">${i.qty}</td>
-      <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;color:#374151;font-size:14px;text-align:right;">$${i.lineTotal.toFixed(2)}</td>
+      <td style="padding:12px 0;border-bottom:1px solid #f3f4f6;color:#374151;font-size:14px;">
+        <span style="font-weight:600;">${i.name}</span>
+      </td>
+      <td style="padding:12px 0;border-bottom:1px solid #f3f4f6;color:#6b7280;font-size:14px;text-align:center;">
+        $${i.price.toFixed(2)}
+      </td>
+      <td style="padding:12px 0;border-bottom:1px solid #f3f4f6;color:#374151;font-size:14px;text-align:center;">
+        ${i.qty}
+      </td>
+      <td style="padding:12px 0;border-bottom:1px solid #f3f4f6;color:#fea928;font-size:14px;font-weight:700;text-align:right;">
+        $${i.lineTotal.toFixed(2)}
+      </td>
     </tr>`).join("");
 
   const shippingText = order.shipping === 0
     ? `<span style="color:#059669;font-weight:600;">FREE</span>`
-    : `$${order.shipping.toFixed(2)}`;
+    : `<span>$${order.shipping.toFixed(2)}</span>`;
 
   return safeSend({
     to,
@@ -179,9 +188,12 @@ const sendOrderConfirmationEmail = ({ to, name, order }) => {
         <h2 style="margin:0 0 4px;color:#111827;font-size:22px;">Thank you, ${name}!</h2>
         <p style="margin:0;color:#6b7280;font-size:14px;">Order <strong style="color:#fea928;">#${order.id}</strong></p>
       </td></tr>
+
       <tr><td style="padding:24px 40px;">
+
+        <!-- Order meta -->
         <table width="100%" cellpadding="0" cellspacing="0"
-          style="background:#f9fafb;border-radius:12px;padding:16px;margin-bottom:24px;">
+          style="background:#f9fafb;border-radius:12px;padding:16px;margin-bottom:28px;">
           <tr>
             <td style="padding:5px 0;color:#6b7280;font-size:13px;">📅 Date</td>
             <td style="padding:5px 0;color:#111827;font-size:13px;font-weight:600;text-align:right;">
@@ -189,28 +201,37 @@ const sendOrderConfirmationEmail = ({ to, name, order }) => {
             </td>
           </tr>
           <tr>
-            <td style="padding:5px 0;color:#6b7280;font-size:13px;">📍 Delivery</td>
+            <td style="padding:5px 0;color:#6b7280;font-size:13px;">📍 Delivery Address</td>
             <td style="padding:5px 0;color:#111827;font-size:13px;font-weight:600;text-align:right;">${order.address}</td>
           </tr>
           <tr>
-            <td style="padding:5px 0;color:#6b7280;font-size:13px;">💳 Payment</td>
+            <td style="padding:5px 0;color:#6b7280;font-size:13px;">💳 Payment Method</td>
             <td style="padding:5px 0;color:#111827;font-size:13px;font-weight:600;text-align:right;">${order.paymentMethod}</td>
+          </tr>
+          <tr>
+            <td style="padding:5px 0;color:#6b7280;font-size:13px;">🚚 Est. Delivery</td>
+            <td style="padding:5px 0;color:#111827;font-size:13px;font-weight:600;text-align:right;">3–5 Business Days</td>
           </tr>
         </table>
 
-        <h3 style="margin:0 0 10px;color:#111827;font-size:15px;font-weight:700;">Order Items</h3>
-        <table width="100%" cellpadding="0" cellspacing="0">
+        <!-- Items table -->
+        <h3 style="margin:0 0 12px;color:#111827;font-size:15px;font-weight:700;">🛒 Items Ordered (${order.items.length})</h3>
+        <table width="100%" cellpadding="0" cellspacing="0"
+          style="border:1px solid #f3f4f6;border-radius:12px;overflow:hidden;">
           <thead>
-            <tr style="background:#f3f4f6;">
-              <th style="padding:8px 0;text-align:left;color:#6b7280;font-size:11px;text-transform:uppercase;">Product</th>
-              <th style="padding:8px 0;text-align:center;color:#6b7280;font-size:11px;text-transform:uppercase;">Qty</th>
-              <th style="padding:8px 0;text-align:right;color:#6b7280;font-size:11px;text-transform:uppercase;">Total</th>
+            <tr style="background:#f9fafb;">
+              <th style="padding:10px 12px;text-align:left;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Product</th>
+              <th style="padding:10px 12px;text-align:center;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Price</th>
+              <th style="padding:10px 12px;text-align:center;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Qty</th>
+              <th style="padding:10px 12px;text-align:right;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Total</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
         </table>
 
-        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;">
+        <!-- Price breakdown -->
+        <table width="100%" cellpadding="0" cellspacing="0"
+          style="margin-top:20px;background:#f9fafb;border-radius:12px;padding:16px;">
           <tr>
             <td style="padding:5px 0;color:#6b7280;font-size:14px;">Subtotal</td>
             <td style="padding:5px 0;color:#374151;font-size:14px;text-align:right;">$${order.subtotal.toFixed(2)}</td>
@@ -224,13 +245,14 @@ const sendOrderConfirmationEmail = ({ to, name, order }) => {
             <td style="padding:5px 0;color:#374151;font-size:14px;text-align:right;">$${order.tax.toFixed(2)}</td>
           </tr>
           <tr>
-            <td style="padding:12px 0 0;color:#111827;font-size:16px;font-weight:800;border-top:2px solid #f3f4f6;">Total Paid</td>
-            <td style="padding:12px 0 0;color:#fea928;font-size:18px;font-weight:800;text-align:right;border-top:2px solid #f3f4f6;">
+            <td style="padding:14px 0 0;color:#111827;font-size:16px;font-weight:800;border-top:2px solid #e5e7eb;">Total Paid</td>
+            <td style="padding:14px 0 0;color:#fea928;font-size:20px;font-weight:800;text-align:right;border-top:2px solid #e5e7eb;">
               $${order.total.toFixed(2)}
             </td>
           </tr>
         </table>
 
+        <!-- CTA -->
         <table cellpadding="0" cellspacing="0" style="margin:28px auto 0;">
           <tr>
             <td style="background:linear-gradient(135deg,#fea928,#ed8900);border-radius:50px;padding:14px 32px;">
@@ -240,6 +262,11 @@ const sendOrderConfirmationEmail = ({ to, name, order }) => {
             </td>
           </tr>
         </table>
+
+        <p style="margin:20px 0 0;color:#9ca3af;font-size:12px;text-align:center;">
+          Questions? Reply to this email or contact us at support@motorly.com
+        </p>
+
       </td></tr>
     `),
   }, `OrderConfirm #${order.id} / ${name}`);
