@@ -34,7 +34,7 @@ const values = [
 const team = [
   { name: "ABU BAKAR VIRK", role: "Founder & CEO", img: "https://picsum.photos/seed/ceo/200/200" },
   { name: "Umair Hassan",     role: "Head of Products", img: "https://picsum.photos/seed/products/200/200" },
-  { name: "Sara Khan",      role: "Customer Success", img: "https://picsum.photos/seed/sara/200/200" },
+  { name: "Waiza Khan",      role: "Customer Success", img: "https://picsum.photos/seed/sara/200/200" },
   { name: "Rajab Ayan",    role: "Lead Developer", img: "https://picsum.photos/seed/dev/200/200" },
 ];
 
