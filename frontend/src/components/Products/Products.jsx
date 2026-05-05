@@ -10,11 +10,11 @@ import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 
 const ProductsData = [
-  { id: "p1", img: Img1, title: "Interior Accessories", rating: 5,   color: "White",     price: 49.99,  aosDelay: "0"   },
-  { id: "p2", img: Img2, title: "Mats",                 rating: 4.5, color: "Red & Black",price: 34.99, aosDelay: "100" },
-  { id: "p3", img: Img3, title: "Car Covers",           rating: 4.7, color: "Black",      price: 79.99, aosDelay: "200" },
-  { id: "p4", img: Img4, title: "Renovation Spray",     rating: 4.4, color: "Black",      price: 19.99, aosDelay: "300" },
-  { id: "p5", img: Img5, title: "Rims",                 rating: 4.5, color: "Gold",       price: 299.99,aosDelay: "400" },
+  { id: "p1", img: Img1, title: "Interior Accessories", rating: 5,   color: "White",     price: 39.99,  aosDelay: "0"   },
+  { id: "p2", img: Img2, title: "Mats",                 rating: 4.5, color: "Red & Black",price: 14.99, aosDelay: "100" },
+  { id: "p3", img: Img3, title: "Car Covers",           rating: 4.7, color: "Black",      price: 29.99, aosDelay: "200" },
+  { id: "p4", img: Img4, title: "Renovation Spray",     rating: 4.4, color: "Black",      price: 9.99, aosDelay: "300" },
+  { id: "p5", img: Img5, title: "Rims",                 rating: 4.5, color: "Gold",       price: 199.99,aosDelay: "400" },
 ];
 
 /* ── Single product card ── */

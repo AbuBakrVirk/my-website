@@ -12,7 +12,7 @@ const ProductsData = [
     img: Img1,
     title: "Premium Leather Seat Covers",
     description: "High-quality genuine leather seat covers for a luxurious interior upgrade.",
-    price: 129.99,
+    price: 109.99,
     rating: 4,
   },
   {
@@ -20,7 +20,7 @@ const ProductsData = [
     img: Img2,
     title: "Ambient LED Interior Lights",
     description: "RGB ambient lighting kit with app control for a premium cabin atmosphere.",
-    price: 44.99,
+    price: 34.99,
     rating: 5,
   },
   {
@@ -28,7 +28,7 @@ const ProductsData = [
     img: Img3,
     title: "Car Armrest Organizer",
     description: "Multi-compartment organizer that keeps your center console tidy and accessible.",
-    price: 24.99,
+    price: 14.99,
     rating: 4,
   },
 ];
